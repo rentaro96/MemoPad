@@ -12,13 +12,20 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentTextView: UITextView!
     
-    var saveDeta: UserDefaults = UserDefaults.standard
+    var saveData: UserDefaults = UserDefaults.standard
+    
+    var titles: [String] = []
+    var contents: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        titleTextField .text  = saveDeta.object(forKey:"title")as? String
-        contentTextView.text = saveDeta.object(forKey:"content")as?String
-        titleTextField.delegate = self
+        saveData.register(defaults: ["titles":[], "contents": [] ])
+        titles = saveData.object(forKey:"titles") as! [String]
+        contents = saveData.object(forKey:"contents") as! [String]
+        
+        print(titles)
+        print(contents)
+    titleTextField.delegate = self
         
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
             textField.resignFirstResponder()
@@ -28,10 +35,16 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
         // Do any additional setup after loading the view.
     }
     
-    @IBAction func saveMemo(_ sender : Any) {
+    @IBAction func saveMemo() {
+        let title = titleTextField.text!
+        let content = contentTextView.text!
         
-        saveDeta.set (titleTextField.text, forKey:"title")
-        saveDeta.set (contentTextView.text, forKey:"content")
+        titles.append(title)
+        contents.append(content)
+        
+        saveData.set(titles,forKey:"titles")
+        saveData.set(contents,forKey:"contents")
+        
         
         let alert: UIAlertController = UIAlertController(title:"保存",message:"メモの保存が完了しました。",preferredStyle: .alert)
         alert.addAction(
