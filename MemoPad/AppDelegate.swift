@@ -8,12 +8,20 @@
 import UIKit
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert,.badge,.sound]) {(granted,error) in
+            if granted {
+                UNUserNotificationCenter.current().delegate = self
+            }else {
+                print("Notification permission denied")
+            }
+            }
         return true
     }
 
