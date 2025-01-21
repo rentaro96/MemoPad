@@ -17,6 +17,9 @@ class NotificationManager {
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
                 let notificationContent = UNMutableNotificationContent()
                 notificationContent.title = title
+                
+                notificationContent.body = " [\(title)]が終了しました！"
+                
                 let request = UNNotificationRequest(identifier: UUID().uuidString, content: notificationContent, trigger: trigger)
                 UNUserNotificationCenter.current().add(request)
                 

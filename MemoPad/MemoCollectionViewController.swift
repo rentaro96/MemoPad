@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MemoCollectionViewController: UIViewController, UICollectionViewDataSource{
+class MemoCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate{
     
     
     
@@ -30,6 +30,8 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         
         collectionView.dataSource = self
         
+        collectionView.delegate = self
+        
         let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
         collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.list(using: configuration)
         
@@ -48,9 +50,47 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         cell.contentConfiguration = contentConfiguration
         return cell
     }
-
-   
-
+    
+    func collectionView(_ collectionView: UICollectionView,didSelectItemAt indexPath: IndexPath) {
+        
+        let selectedTitle = titles[indexPath.item]
+        let selectedContent = contents[indexPath.item]
+        
+        print("選択されたメモ")
+        print("タイトル: \(selectedTitle)")
+        print("内容: \(selectedContent)")
+        
+        scheduleNotification(from: selectedContent, title: selectedTitle)
+        
+    }
+    
+    func scheduleNotification(from content: String, title: String) {
+        let components = content.split(separator: ":")
+        if components.count == 2,
+           let minutes = Int(components[0]),
+           let seconds = Int(components[1]) {
+            let totalSeconds = minutes * 60 + seconds
+            
+            NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalSprint("通知が設定されました:\(title) - \(totalSeconds)秒後")
+                                                                                                     } else {
+                print("通知設定に失敗しました: 時間情報が不正です (\(content))")
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            cell.contentView.backgroundColor = UIColor.systemGray5
+        }
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            cell.contentView.backgroundColor = UIColor.clear
+        }
+        
+        
+        
+    }
 }
-
 
