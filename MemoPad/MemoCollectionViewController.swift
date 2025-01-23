@@ -71,7 +71,8 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
            let seconds = Int(components[1]) {
             let totalSeconds = minutes * 60 + seconds
             
-            NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalSprint("通知が設定されました:\(title) - \(totalSeconds)秒後")
+            NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalSeconds))
+            print("通知が設定されました:\(title) - \(totalSeconds)秒後")
                                                                                                      } else {
                 print("通知設定に失敗しました: 時間情報が不正です (\(content))")
         }
