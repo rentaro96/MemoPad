@@ -6,11 +6,18 @@
 //
 
 import UIKit
-//import Lottie
+import Lottie
 
 class MemoCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate{
     
     //private var animationView: LottieAnimationView?
+    
+    
+    @IBOutlet var statusLabel: UILabel!
+   
+    
+    
+    
     
     
     @IBOutlet var collectionView: UICollectionView!
@@ -23,8 +30,29 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     
     
     
+    
+    
+    @IBOutlet weak var animationView: LottieAnimationView!
+    
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //animationView.contentMode = .scaleAspectFit
+         
+         // 2. Set animation loop mode
+         
+         animationView.loopMode = .loop
+         
+         // 3. Adjust animation speed
+         
+         animationView.animationSpeed = 0.5
+         
+         // 4. Play animation
+         animationView.play()
         
        // animationView = .init(name:"loading")
         //animationView!.frame = view.bounds
@@ -71,6 +99,9 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         print("内容: \(selectedContent)")
         
         scheduleNotification(from: selectedContent, title: selectedTitle)
+            self.statusLabel.text = "\(selectedTitle)を進行中"
+        
+        
         
     }
     
@@ -83,7 +114,12 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             
             NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalseconds))
             print("通知が設定されました:\(title) - \(totalseconds)秒後")
-                                                                                                     } else {
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(totalseconds)) {
+                self.statusLabel.text = "達成！"
+            }
+            
+        } else {
                 print("通知設定に失敗しました: 時間情報が不正です (\(content))")
         }
     }
@@ -104,4 +140,6 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         
     }
 }
+
+
 

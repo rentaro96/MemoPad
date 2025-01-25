@@ -6,6 +6,23 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		05A181932D44DA9B00D7E72C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 05A181922D44DA9B00D7E72C /* Lottie */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		05A181972D44DD4700D7E72C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		05EA86EB2CF1C4C5005F628D /* MemoPad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MemoPad.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,16 +53,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05A181932D44DA9B00D7E72C /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		05A181982D44DD6D00D7E72C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		05EA86E22CF1C4C5005F628D = {
 			isa = PBXGroup;
 			children = (
 				05EA86ED2CF1C4C5005F628D /* MemoPad */,
+				05A181982D44DD6D00D7E72C /* Frameworks */,
 				05EA86EC2CF1C4C5005F628D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,6 +94,7 @@
 				05EA86E72CF1C4C5005F628D /* Sources */,
 				05EA86E82CF1C4C5005F628D /* Frameworks */,
 				05EA86E92CF1C4C5005F628D /* Resources */,
+				05A181972D44DD4700D7E72C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -78,6 +105,7 @@
 			);
 			name = MemoPad;
 			packageProductDependencies = (
+				05A181922D44DA9B00D7E72C /* Lottie */,
 			);
 			productName = MemoPad;
 			productReference = 05EA86EB2CF1C4C5005F628D /* MemoPad.app */;
@@ -109,6 +137,7 @@
 			mainGroup = 05EA86E22CF1C4C5005F628D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				05A181912D44DA9B00D7E72C /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 05EA86EC2CF1C4C5005F628D /* Products */;
@@ -344,6 +373,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		05A181912D44DA9B00D7E72C /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		05A181922D44DA9B00D7E72C /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 05A181912D44DA9B00D7E72C /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 05EA86E32CF1C4C5005F628D /* Project object */;
 }
