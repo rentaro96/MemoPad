@@ -11,6 +11,18 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
     
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentTextView: UITextView!
+    @IBOutlet weak var datepicker: UIDatePicker!
+    
+    func getPickerValue() -> String{
+        let selectedTime = datepicker.countDownDuration
+        let hour = (Int(selectedTime) / 3600)
+        let minutes = Int(selectedTime) / 60 % 60
+       
+        print(selectedTime)
+        print("選択された時間:\(hour)時間 \(minutes)分 ")
+        let timeString: String = "\(hour):\(minutes)"
+        return timeString
+    }
     
     var saveData: UserDefaults = UserDefaults.standard
     
@@ -37,14 +49,13 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
     
     @IBAction func saveMemo() {
         let title = titleTextField.text!
-        let content = contentTextView.text!
+        let content = getPickerValue()
         
         titles.append(title)
         contents.append(content)
         
         saveData.set(titles,forKey:"titles")
         saveData.set(contents,forKey:"contents")
-        
         
         let alert: UIAlertController = UIAlertController(title:"保存",message:"メモの保存が完了しました。",preferredStyle: .alert)
         alert.addAction(
@@ -55,6 +66,7 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
                               
                               
                           })
+            
         )
         present (alert,animated: true,completion: nil)
         

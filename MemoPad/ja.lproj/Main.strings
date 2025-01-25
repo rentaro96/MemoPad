@@ -1,0 +1,12 @@
+
+/* Class = "UILabel"; text = "時間"; ObjectID = "5GG-Qq-yKb"; */
+"5GG-Qq-yKb.text" = "時間";
+
+/* Class = "UILabel"; text = "タスク名"; ObjectID = "C2b-0Y-jbP"; */
+"C2b-0Y-jbP.text" = "タスク名";
+
+/* Class = "UIButton"; configuration.title = "始める"; ObjectID = "Dbq-Z6-GVI"; */
+"Dbq-Z6-GVI.configuration.title" = "始める";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "Dbq-Z6-GVI"; */
+"Dbq-Z6-GVI.normalTitle" = "Button";

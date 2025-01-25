@@ -6,9 +6,11 @@
 //
 
 import UIKit
+//import Lottie
 
 class MemoCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate{
     
+    //private var animationView: LottieAnimationView?
     
     
     @IBOutlet var collectionView: UICollectionView!
@@ -23,6 +25,14 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+       // animationView = .init(name:"loading")
+        //animationView!.frame = view.bounds
+       // animationView!.contentMode = .scaleAspectFit
+        //animationView!.loopMode = .loop
+        //animationView!.animationSpeed = 0.5
+        //view.addSubview(animationView!)
+        //animationView!.play()
         
         saveData.register(defaults: [ "titles": [], "contents": [] ])
         titles = saveData.object(forKey: "titles") as! [String]
