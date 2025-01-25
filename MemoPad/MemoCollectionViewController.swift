@@ -77,12 +77,12 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     func scheduleNotification(from content: String, title: String) {
         let components = content.split(separator: ":")
         if components.count == 2,
-           let minutes = Int(components[0]),
-           let seconds = Int(components[1]) {
-            let totalSeconds = minutes * 60 + seconds
+           let hours = Int(components[0]),
+           let minutes = Int(components[1]) {
+            let totalminutes = hours * 60 + hours
             
-            NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalSeconds))
-            print("通知が設定されました:\(title) - \(totalSeconds)秒後")
+            NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalminutes))
+            print("通知が設定されました:\(title) - \(totalminutes)分後")
                                                                                                      } else {
                 print("通知設定に失敗しました: 時間情報が不正です (\(content))")
         }
