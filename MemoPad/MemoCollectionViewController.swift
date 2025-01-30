@@ -16,10 +16,6 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     @IBOutlet var statusLabel: UILabel!
    
     
-    
-    
-    
-    
     @IBOutlet var collectionView: UICollectionView!
     
     var saveData: UserDefaults = UserDefaults.standard
@@ -117,6 +113,10 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             
             DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(totalseconds)) {
                 self.statusLabel.text = "達成！"
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                                self.statusLabel.text = "動作中アラームなし"
+                            }
             }
             
         } else {
@@ -140,6 +140,4 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         
     }
 }
-
-
 
