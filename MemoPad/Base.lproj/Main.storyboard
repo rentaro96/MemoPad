@@ -96,7 +96,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="animationView" destination="cs7-aK-vwM" id="goY-4L-7A9"/>
+                        <outlet property="animationView" destination="cs7-aK-vwM" id="uSE-fd-bIR"/>
                         <outlet property="collectionView" destination="lTG-Ys-AMn" id="cqa-K5-0RI"/>
                         <outlet property="statusLabel" destination="3yR-LY-Zoh" id="6Uw-np-gqP"/>
                     </connections>

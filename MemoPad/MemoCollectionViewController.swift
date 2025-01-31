@@ -96,10 +96,13 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         
         scheduleNotification(from: selectedContent, title: selectedTitle)
             self.statusLabel.text = "\(selectedTitle)を進行中"
+        self.animationView.animation = LottieAnimation.named("work")
+        self.animationView.play()
         
         
         
     }
+    
     
     func scheduleNotification(from content: String, title: String) {
         let components = content.split(separator: ":")
@@ -113,9 +116,13 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             
             DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(totalseconds)) {
                 self.statusLabel.text = "達成！"
+                self.animationView.animation = LottieAnimation.named("達成")
+                self.animationView.play()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                                 self.statusLabel.text = "動作中アラームなし"
+                    self.animationView.animation = LottieAnimation.named("chair")
+                    self.animationView.play()
                             }
             }
             
