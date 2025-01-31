@@ -7,8 +7,10 @@
 
 import UIKit
 import Lottie
+import AVFoundation
 
-class MemoCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate{
+
+class MemoCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, AVAudioPlayerDelegate{
     
     //private var animationView: LottieAnimationView?
     
@@ -24,6 +26,10 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     
     var contents : [String] = []
     
+    var player :AVAudioPlayer!
+    
+    
+    
     
     
     
@@ -36,6 +42,8 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        prepareSound()
         
         //animationView.contentMode = .scaleAspectFit
          
@@ -72,6 +80,22 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         
     }
     
+    func prepareSound() {
+        guard let soundFilePath = Bundle.main.path(forResource: "alarm", ofType: "mp3") else {
+            print("サウンドファイルが見つかりません")
+            return
+        }
+        
+        let soundURL = URL(fileURLWithPath: soundFilePath)
+        
+        do {
+            player = try AVAudioPlayer(contentsOf: soundURL)
+            player?.delegate = self
+            player?.prepareToPlay()
+        } catch {
+            print("サウンドの読み込みに失敗しました: \(error)")
+        }
+    }
     func collectionView( _ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return titles.count
         
@@ -84,6 +108,8 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         cell.contentConfiguration = contentConfiguration
         return cell
     }
+    
+    
     
     func collectionView(_ collectionView: UICollectionView,didSelectItemAt indexPath: IndexPath) {
         
@@ -98,6 +124,9 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             self.statusLabel.text = "\(selectedTitle)を進行中"
         self.animationView.animation = LottieAnimation.named("work")
         self.animationView.play()
+        
+        
+        
         
         
         
@@ -118,8 +147,13 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
                 self.statusLabel.text = "達成！"
                 self.animationView.animation = LottieAnimation.named("達成")
                 self.animationView.play()
+                self.player?.play()
+                
+                
+                
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                    self.player?.stop()
                                 self.statusLabel.text = "動作中アラームなし"
                     self.animationView.animation = LottieAnimation.named("chair")
                     self.animationView.play()
