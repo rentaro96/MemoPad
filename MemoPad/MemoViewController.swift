@@ -26,6 +26,9 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
     
     var saveData: UserDefaults = UserDefaults.standard
     
+    
+    
+    
     var titles: [String] = []
     var contents: [String] = []
     
@@ -44,6 +47,8 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
             return true
         }
         
+        
+        
         // Do any additional setup after loading the view.
     }
     
@@ -52,18 +57,21 @@ class MemoViewController: UIViewController,UITextFieldDelegate {
         let title = titleTextField.text!
         let content = getPickerValue()
         
+       
+        
         titles.append(title)
         contents.append(content)
         
         saveData.set(titles,forKey:"titles")
         saveData.set(contents,forKey:"contents")
         
-        let alert: UIAlertController = UIAlertController(title:"保存",message:"メモの保存が完了しました。",preferredStyle: .alert)
-        alert.addAction(
-            UIAlertAction(title: "OK",
-                          style: .default,
-                          handler:{ action in
-                              self.navigationController?.popViewController(animated: true)
+        
+
+        
+        let alert = UIAlertController(title: "保存", message: "メモの保存が完了しました。", preferredStyle: .alert)
+           alert.addAction(
+               UIAlertAction(title: "OK", style: .default, handler: { action in
+                   self.navigationController?.popViewController(animated: true)
                               
                               
                           })

@@ -28,6 +28,31 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     
     var player :AVAudioPlayer!
     
+    override func viewWillAppear(_ animated: Bool){
+        refreshData()
+        
+        
+    }
+    
+    func refreshData() {
+        titles = saveData.object(forKey: "titles") as! [String]
+        contents = saveData.object(forKey: "contents") as! [String]
+        collectionView.reloadData()
+    }
+    
+    func setupCollectionView() {
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
+        
+        
+        
+        let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+        
+        
+        
+        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.list(using: configuration)
+    }
     
     
     
@@ -45,7 +70,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         
         prepareSound()
         
-        //animationView.contentMode = .scaleAspectFit
+        animationView.contentMode = .scaleAspectFit
          
          // 2. Set animation loop mode
          
@@ -148,6 +173,8 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
                 self.animationView.animation = LottieAnimation.named("達成")
                 self.animationView.play()
                 self.player?.play()
+                
+               
                 
                 
                 
