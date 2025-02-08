@@ -44,16 +44,30 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        
-        
-        
-        let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-        
-        
-        
+        var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+        configuration.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+            let deleteAction = UIContextualAction(style: .destructive, title: "削除") { [weak self] (action, view, completionHandler) in
+                self?.deleteMemo(at: indexPath)
+                completionHandler(true)
+            }
+            let swipeActions = UISwipeActionsConfiguration(actions: [deleteAction])
+            return swipeActions
+        }
         collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.list(using: configuration)
     }
-    
+        
+    func deleteMemo(at indexPath: IndexPath) {
+        titles.remove(at: indexPath.item)
+        contents.remove(at: indexPath.item)
+        collectionView.deleteItems(at: [indexPath])
+        saveData.set(titles, forKey:"titles")
+        saveData.set(contents, forKey:"contents")
+        
+    }
+        
+        
+        
+       
     
     
     
@@ -66,7 +80,9 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
+    
         
         prepareSound()
         
@@ -92,18 +108,13 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         //animationView!.play()
         
         saveData.register(defaults: [ "titles": [], "contents": [] ])
-        titles = saveData.object(forKey: "titles") as! [String]
-        contents = saveData.object(forKey: "contents") as! [String]
+        setupCollectionView()
         
-        collectionView.dataSource = self
-        
-        collectionView.delegate = self
-        
-        let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.list(using: configuration)
         
         
     }
+    
+    
     
     func prepareSound() {
         guard let soundFilePath = Bundle.main.path(forResource: "alarm", ofType: "mp3") else {
