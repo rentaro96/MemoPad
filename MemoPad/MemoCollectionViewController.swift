@@ -9,121 +9,74 @@ import UIKit
 import Lottie
 import AVFoundation
 
+class MemoCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, AVAudioPlayerDelegate {
 
-class MemoCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, AVAudioPlayerDelegate{
-    
-    //private var animationView: LottieAnimationView?
-    
+    var timer: Timer?
+    var countdown: Int = 0
     
     @IBOutlet var statusLabel: UILabel!
-   
-    
     @IBOutlet var collectionView: UICollectionView!
-    
+    @IBOutlet var timerLabel: UILabel!
+    @IBOutlet weak var animationView: LottieAnimationView!
+
     var saveData: UserDefaults = UserDefaults.standard
-    
     var titles: [String] = []
-    
-    var contents : [String] = []
-    
-    var player :AVAudioPlayer!
-    
-    override func viewWillAppear(_ animated: Bool){
+    var contents: [String] = []
+    var player: AVAudioPlayer?
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         refreshData()
-        
-        
     }
-    
+
     func refreshData() {
-        titles = saveData.object(forKey: "titles") as! [String]
-        contents = saveData.object(forKey: "contents") as! [String]
+        titles = saveData.object(forKey: "titles") as? [String] ?? []
+        contents = saveData.object(forKey: "contents") as? [String] ?? []
         collectionView.reloadData()
     }
-    
+
     func setupCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
         
         var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
         configuration.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
-            let deleteAction = UIContextualAction(style: .destructive, title: "削除") { [weak self] (action, view, completionHandler) in
+            let deleteAction = UIContextualAction(style: .destructive, title: "削除") { [weak self] (_, _, completionHandler) in
                 self?.deleteMemo(at: indexPath)
                 completionHandler(true)
             }
-            let swipeActions = UISwipeActionsConfiguration(actions: [deleteAction])
-            return swipeActions
+            return UISwipeActionsConfiguration(actions: [deleteAction])
         }
         collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.list(using: configuration)
     }
-        
+
     func deleteMemo(at indexPath: IndexPath) {
         titles.remove(at: indexPath.item)
         contents.remove(at: indexPath.item)
         collectionView.deleteItems(at: [indexPath])
-        saveData.set(titles, forKey:"titles")
-        saveData.set(contents, forKey:"contents")
-        
+        saveData.set(titles, forKey: "titles")
+        saveData.set(contents, forKey: "contents")
     }
-        
-        
-        
-       
-    
-    
-    
-    
-    
-    @IBOutlet weak var animationView: LottieAnimationView!
-    
-    
-    
-    
-    
+
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-    
-        
         prepareSound()
         
         animationView.contentMode = .scaleAspectFit
-         
-         // 2. Set animation loop mode
-         
-         animationView.loopMode = .loop
-         
-         // 3. Adjust animation speed
-         
-         animationView.animationSpeed = 0.5
-         
-         // 4. Play animation
-         animationView.play()
-        
-       // animationView = .init(name:"loading")
-        //animationView!.frame = view.bounds
-       // animationView!.contentMode = .scaleAspectFit
-        //animationView!.loopMode = .loop
-        //animationView!.animationSpeed = 0.5
-        //view.addSubview(animationView!)
-        //animationView!.play()
-        
-        saveData.register(defaults: [ "titles": [], "contents": [] ])
+        animationView.loopMode = .loop
+        animationView.animationSpeed = 0.5
+        animationView.play()
+
+        saveData.register(defaults: ["titles": [], "contents": []])
         setupCollectionView()
-        
-        
-        
     }
-    
-    
-    
+
     func prepareSound() {
         guard let soundFilePath = Bundle.main.path(forResource: "alarm", ofType: "mp3") else {
             print("サウンドファイルが見つかりません")
             return
         }
-        
         let soundURL = URL(fileURLWithPath: soundFilePath)
-        
         do {
             player = try AVAudioPlayer(contentsOf: soundURL)
             player?.delegate = self
@@ -132,11 +85,12 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             print("サウンドの読み込みに失敗しました: \(error)")
         }
     }
-    func collectionView( _ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return titles.count
-        
     }
-    func collectionView( _ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
         var contentConfiguration = UIListContentConfiguration.subtitleCell()
         contentConfiguration.text = titles[indexPath.item]
@@ -144,79 +98,73 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         cell.contentConfiguration = contentConfiguration
         return cell
     }
-    
-    
-    
-    func collectionView(_ collectionView: UICollectionView,didSelectItemAt indexPath: IndexPath) {
-        
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedTitle = titles[indexPath.item]
         let selectedContent = contents[indexPath.item]
-        
+
         print("選択されたメモ")
         print("タイトル: \(selectedTitle)")
         print("内容: \(selectedContent)")
-        
+
         scheduleNotification(from: selectedContent, title: selectedTitle)
-            self.statusLabel.text = "\(selectedTitle)を進行中"
-        self.animationView.animation = LottieAnimation.named("work")
-        self.animationView.play()
-        
-        
-        
-        
-        
-        
+        statusLabel.text = "\(selectedTitle)を進行中"
+        animationView.animation = LottieAnimation.named("work")
+        animationView.play()
     }
-    
-    
+
     func scheduleNotification(from content: String, title: String) {
         let components = content.split(separator: ":")
         if components.count == 2,
            let hours = Int(components[0]),
            let minutes = Int(components[1]) {
-            let totalseconds = hours * 3600 + minutes * 60
-            
-            NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalseconds))
-            print("通知が設定されました:\(title) - \(totalseconds)秒後")
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(totalseconds)) {
+            let totalSeconds = hours * 3600 + minutes * 60
+            countdown = totalSeconds
+
+            timer?.invalidate() // 既存のタイマーを無効化
+            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+
+            NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalSeconds))
+            print("通知が設定されました: \(title) - \(totalSeconds)秒後")
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(totalSeconds)) {
                 self.statusLabel.text = "達成！"
-                self.animationView.animation = LottieAnimation.named("達成")
+                self.animationView.animation = LottieAnimation.named("success")
                 self.animationView.play()
                 self.player?.play()
-                
-               
-                
-                
-                
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                     self.player?.stop()
-                                self.statusLabel.text = "動作中アラームなし"
+                    self.statusLabel.text = "動作中アラームなし"
                     self.animationView.animation = LottieAnimation.named("chair")
                     self.animationView.play()
-                            }
+                }
             }
-            
         } else {
-                print("通知設定に失敗しました: 時間情報が不正です (\(content))")
+            print("通知設定に失敗しました: 時間情報が不正です (\(content))")
         }
     }
-    
+
+    @objc func updateTimer() {
+        if countdown > 0 {
+            let remainingMinutes = countdown / 60
+            let remainingSeconds = countdown % 60
+            timerLabel.text = String(format: "%02d:%02d", remainingMinutes, remainingSeconds)
+            countdown -= 1
+        } else {
+            timer?.invalidate()
+        }
+    }
+
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) {
             cell.contentView.backgroundColor = UIColor.systemGray5
         }
-        
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) {
             cell.contentView.backgroundColor = UIColor.clear
         }
-        
-        
-        
     }
 }
-
