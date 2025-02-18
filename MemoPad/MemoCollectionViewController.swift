@@ -60,6 +60,14 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        timerLabel.isHidden = false
+        timerLabel.alpha = 1.0
+        
+        
+        timerLabel?.frame = CGRect(x: 50, y: 100, width: 200, height: 50)
+        
+        
         prepareSound()
         
         animationView.contentMode = .scaleAspectFit
@@ -69,7 +77,11 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
 
         saveData.register(defaults: ["titles": [], "contents": []])
         setupCollectionView()
+        
+        
     }
+    
+    
 
     func prepareSound() {
         guard let soundFilePath = Bundle.main.path(forResource: "alarm", ofType: "mp3") else {
@@ -120,8 +132,9 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
            let minutes = Int(components[1]) {
             let totalSeconds = hours * 3600 + minutes * 60
             countdown = totalSeconds
+            timerLabel.text = "\(hours):\(minutes)"
 
-            timer?.invalidate() // 既存のタイマーを無効化
+            timer?.invalidate()
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
 
             NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalSeconds))
@@ -149,9 +162,18 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         if countdown > 0 {
             let remainingMinutes = countdown / 60
             let remainingSeconds = countdown % 60
-            timerLabel.text = String(format: "%02d:%02d", remainingMinutes, remainingSeconds)
+            let timeString = String(format: "%02d:%02d", remainingMinutes, remainingSeconds)
+            print("タイマー更新: \(timeString)")
+            DispatchQueue.main.async {
+                self.timerLabel.text = timeString
+                self.timerLabel.textColor = .black
+                print("timerLabel:" , self.timerLabel ?? "nil")
+            }
+            
             countdown -= 1
+            
         } else {
+            print("タイマー終了")
             timer?.invalidate()
         }
     }
@@ -168,3 +190,4 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         }
     }
 }
+
