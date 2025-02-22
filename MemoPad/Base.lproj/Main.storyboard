@@ -53,8 +53,8 @@
                                     <userDefinedRuntimeAttribute type="string" keyPath="animationName" value="chair"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jjw-gd-nzp">
-                                <rect key="frame" x="168" y="124" width="474" height="80"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jjw-gd-nzp">
+                                <rect key="frame" x="168" y="108" width="474" height="80"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="55"/>
                                 <nil key="textColor"/>
@@ -99,11 +99,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dbq-Z6-GVI">
-                                <rect key="frame" x="310" y="766" width="190" height="85"/>
+                                <rect key="frame" x="255" y="743" width="300" height="172"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="始める">
-                                    <fontDescription key="titleFontDescription" type="system" pointSize="59"/>
+                                <buttonConfiguration key="configuration" style="plain">
+                                    <backgroundConfiguration key="background" image="ボタン" imageContentMode="scaleAspectFit"/>
                                 </buttonConfiguration>
                                 <connections>
                                     <segue destination="79n-MQ-wmw" kind="show" id="BDr-sH-KaY"/>
@@ -117,7 +117,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="959.375" y="-27.5390625"/>
+            <point key="canvasLocation" x="959.25925925925924" y="-27.777777777777779"/>
         </scene>
         <!--Memo View Controller-->
         <scene sceneID="KSe-97-HXi">
@@ -193,5 +193,6 @@
     <resources>
         <image name="Dani Sato" width="492" height="175"/>
         <image name="MemoAlarm" width="500" height="500"/>
+        <image name="ボタン" width="350" height="150"/>
     </resources>
 </document>

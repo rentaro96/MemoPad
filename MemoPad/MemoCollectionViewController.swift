@@ -13,6 +13,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
 
     var timer: Timer?
     var countdown: Int = 0
+    var startTime: Date?
     
     @IBOutlet var statusLabel: UILabel!
     @IBOutlet var collectionView: UICollectionView!
@@ -39,6 +40,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         collectionView.dataSource = self
         collectionView.delegate = self
         
+        
         var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
         configuration.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
             let deleteAction = UIContextualAction(style: .destructive, title: "削除") { [weak self] (_, _, completionHandler) in
@@ -47,8 +49,29 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             }
             return UISwipeActionsConfiguration(actions: [deleteAction])
         }
-        collectionView.collectionViewLayout = UICollectionViewCompositionalLayout.list(using: configuration)
-    }
+        //セクションのレイアウトを設定
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+            //スワイプアクションの設定を保持
+            configuration.trailingSwipeActionsConfigurationProvider = {[weak self]indexPath in
+                let deleteAction = UIContextualAction(style: .destructive, title: "削除"){[weak self](action,view, completionHandler) in
+                    self?.deleteMemo(at: indexPath)
+                    completionHandler(true)
+                }
+                return UISwipeActionsConfiguration(actions: [deleteAction])
+            }
+            
+            let section = NSCollectionLayoutSection.list(using: configuration, layoutEnvironment: layoutEnvironment)
+            
+            //セクション全体の余白を設定
+            section.contentInsets = NSDirectionalEdgeInsets(top: 10,leading: 10,bottom: 10, trailing: 10)
+            //セル間の間隔を設定
+            section.interGroupSpacing = 10
+            
+            return section
+        }
+        collectionView.collectionViewLayout = layout
+        }
 
     func deleteMemo(at indexPath: IndexPath) {
         titles.remove(at: indexPath.item)
@@ -104,10 +127,29 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
+        
         var contentConfiguration = UIListContentConfiguration.subtitleCell()
+        
         contentConfiguration.text = titles[indexPath.item]
+        contentConfiguration.textProperties.font = .systemFont(ofSize: 24,weight: .medium)
+        contentConfiguration.textProperties.color = .label
+        //サブタイトル（内容）のフォントサイズと設定
         contentConfiguration.secondaryText = contents[indexPath.item]
+        contentConfiguration.secondaryTextProperties.font = .systemFont(ofSize: 16)
+        contentConfiguration.secondaryTextProperties.color = .secondaryLabel
+        
+        //テキストの間の余白を設定
+        contentConfiguration.textToSecondaryTextVerticalPadding = 8
+        
+        //セル内のコンテンツの余白を設定
+        contentConfiguration.directionalLayoutMargins = .init(top: 8, leading: 8, bottom: 8, trailing: 8)
+        
+        
+        
         cell.contentConfiguration = contentConfiguration
+        
+        //セルの最小高さを設定
+        cell.frame.size.height = 64
         return cell
     }
 
@@ -132,7 +174,8 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
            let minutes = Int(components[1]) {
             let totalSeconds = hours * 3600 + minutes * 60
             countdown = totalSeconds
-            timerLabel.text = "\(hours):\(minutes)"
+            startTime = Date()
+            //timerLabel.text = "\(hours):\(minutes)"
 
             timer?.invalidate()
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
@@ -159,23 +202,44 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     }
 
     @objc func updateTimer() {
-        if countdown > 0 {
-            let remainingMinutes = countdown / 60
-            let remainingSeconds = countdown % 60
-            let timeString = String(format: "%02d:%02d", remainingMinutes, remainingSeconds)
-            print("タイマー更新: \(timeString)")
-            DispatchQueue.main.async {
-                self.timerLabel.text = timeString
-                self.timerLabel.textColor = .black
-                print("timerLabel:" , self.timerLabel ?? "nil")
+       guard let startTime = startTime else { return }
+        let elapsed = Int(Date().timeIntervalSince(startTime))
+        let remainingTime = max(countdown - elapsed, 0)
+        
+        if remainingTime > 0{
+            let hours = remainingTime / 3600
+            let minutes = (remainingTime % 3600) / 60
+            let seconds = remainingTime % 60
+           
+            var timeString : String
+            if hours > 0 {
+                timeString = String(format: "%d:%02d:%02d", hours, minutes, seconds)
+            }else  {
+                timeString = String(format: "%02d:%02d", minutes, seconds)
+                
+            }
+            print("タイマー更新\(timeString)")
+           
             }
             
-            countdown -= 1
-            
-        } else {
             print("タイマー終了")
+            timerLabel.text = ""
             timer?.invalidate()
+            DispatchQueue.main.async {
+                self.statusLabel.text = "達成！"
+                self.animationView.animation = LottieAnimation.named("達成")
+                self.animationView.play()
+                self.player?.play()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                    self.player?.stop()
+                    self.statusLabel.text = "動作中アラームなし"
+                    self.animationView.animation = LottieAnimation.named("chair")
+                    self.animationView.play()
+                }
+            
+            }
         }
+       
     }
 
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
@@ -189,5 +253,5 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             cell.contentView.backgroundColor = UIColor.clear
         }
     }
-}
+
 
