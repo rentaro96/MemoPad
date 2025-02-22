@@ -10,7 +10,7 @@ import Lottie
 import AVFoundation
 
 class MemoCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, AVAudioPlayerDelegate {
-
+    
     var timer: Timer?
     var countdown: Int = 0
     var startTime: Date?
@@ -19,23 +19,23 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var timerLabel: UILabel!
     @IBOutlet weak var animationView: LottieAnimationView!
-
+    
     var saveData: UserDefaults = UserDefaults.standard
     var titles: [String] = []
     var contents: [String] = []
     var player: AVAudioPlayer?
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         refreshData()
     }
-
+    
     func refreshData() {
         titles = saveData.object(forKey: "titles") as? [String] ?? []
         contents = saveData.object(forKey: "contents") as? [String] ?? []
         collectionView.reloadData()
     }
-
+    
     func setupCollectionView() {
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -71,8 +71,8 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             return section
         }
         collectionView.collectionViewLayout = layout
-        }
-
+    }
+    
     func deleteMemo(at indexPath: IndexPath) {
         titles.remove(at: indexPath.item)
         contents.remove(at: indexPath.item)
@@ -80,7 +80,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         saveData.set(titles, forKey: "titles")
         saveData.set(contents, forKey: "contents")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -97,7 +97,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         animationView.loopMode = .loop
         animationView.animationSpeed = 0.5
         animationView.play()
-
+        
         saveData.register(defaults: ["titles": [], "contents": []])
         setupCollectionView()
         
@@ -105,7 +105,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
     }
     
     
-
+    
     func prepareSound() {
         guard let soundFilePath = Bundle.main.path(forResource: "alarm", ofType: "mp3") else {
             print("サウンドファイルが見つかりません")
@@ -120,11 +120,11 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             print("サウンドの読み込みに失敗しました: \(error)")
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return titles.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
         
@@ -152,21 +152,21 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         cell.frame.size.height = 64
         return cell
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedTitle = titles[indexPath.item]
         let selectedContent = contents[indexPath.item]
-
+        
         print("選択されたメモ")
         print("タイトル: \(selectedTitle)")
         print("内容: \(selectedContent)")
-
+        
         scheduleNotification(from: selectedContent, title: selectedTitle)
         statusLabel.text = "\(selectedTitle)を進行中"
         animationView.animation = LottieAnimation.named("work")
         animationView.play()
     }
-
+    
     func scheduleNotification(from content: String, title: String) {
         let components = content.split(separator: ":")
         if components.count == 2,
@@ -175,20 +175,20 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             let totalSeconds = hours * 3600 + minutes * 60
             countdown = totalSeconds
             startTime = Date()
-            //timerLabel.text = "\(hours):\(minutes)"
-
+            timerLabel.text = "\(hours):\(minutes)"
+            
             timer?.invalidate()
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
-
+            
             NotificationManager.setTimeIntervalNotification(title: title, timeInterval: TimeInterval(totalSeconds))
             print("通知が設定されました: \(title) - \(totalSeconds)秒後")
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(totalSeconds)) {
                 self.statusLabel.text = "達成！"
                 self.animationView.animation = LottieAnimation.named("達成")
                 self.animationView.play()
                 self.player?.play()
-
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                     self.player?.stop()
                     self.statusLabel.text = "動作中アラームなし"
@@ -200,28 +200,29 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             print("通知設定に失敗しました: 時間情報が不正です (\(content))")
         }
     }
-
+    
     @objc func updateTimer() {
-       guard let startTime = startTime else { return }
+        guard let startTime = startTime else { return }
         let elapsed = Int(Date().timeIntervalSince(startTime))
         let remainingTime = max(countdown - elapsed, 0)
         
         if remainingTime > 0{
-            let hours = remainingTime / 3600
+            
             let minutes = (remainingTime % 3600) / 60
             let seconds = remainingTime % 60
-           
+            
             var timeString : String
-            if hours > 0 {
-                timeString = String(format: "%d:%02d:%02d", hours, minutes, seconds)
+            if remainingTime > 0 {
+                timeString = String(format: "%d:%02d:%02d",  minutes, seconds)
+                
             }else  {
                 timeString = String(format: "%02d:%02d", minutes, seconds)
                 
             }
+            timerLabel.text = "\(minutes):\(seconds)"
             print("タイマー更新\(timeString)")
-           
-            }
             
+        }else if remainingTime == 0{
             print("タイマー終了")
             timerLabel.text = ""
             timer?.invalidate()
@@ -236,22 +237,23 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
                     self.animationView.animation = LottieAnimation.named("chair")
                     self.animationView.play()
                 }
-            
+                
             }
         }
-       
+        
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) {
             cell.contentView.backgroundColor = UIColor.systemGray5
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         if let cell = collectionView.cellForItem(at: indexPath) {
             cell.contentView.backgroundColor = UIColor.clear
         }
     }
-
-
+    
+    
+}
