@@ -175,7 +175,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
             let totalSeconds = hours * 3600 + minutes * 60
             countdown = totalSeconds
             startTime = Date()
-            timerLabel.text = "\(hours):\(minutes)"
+            //timerLabel.text = "\(hours):\(minutes)"
             
             timer?.invalidate()
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
@@ -207,19 +207,21 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         let remainingTime = max(countdown - elapsed, 0)
         
         if remainingTime > 0{
-            
+            let hours = remainingTime / 3600
             let minutes = (remainingTime % 3600) / 60
             let seconds = remainingTime % 60
             
             var timeString : String
-            if remainingTime > 0 {
-                timeString = String(format: "%d:%02d:%02d",  minutes, seconds)
+            if hours > 0 {
+                timeString = String(format: "%d:%02d:%02d",hours,  minutes, seconds)
+                timerLabel.text = "\(hours):\(minutes):\(seconds)"
                 
             }else  {
                 timeString = String(format: "%02d:%02d", minutes, seconds)
+                timerLabel.text = "\(minutes):\(seconds)"
                 
             }
-            timerLabel.text = "\(minutes):\(seconds)"
+            
             print("タイマー更新\(timeString)")
             
         }else if remainingTime == 0{
