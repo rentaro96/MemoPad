@@ -65,7 +65,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
         timerLabel.alpha = 1.0
         
         
-        timerLabel?.frame = CGRect(x: 50, y: 100, width: 200, height: 50)
+        //timerLabel?.frame = CGRect(x: 50, y: 100, width: 200, height: 50)
         
         
         prepareSound()
@@ -142,7 +142,7 @@ class MemoCollectionViewController: UIViewController, UICollectionViewDataSource
 
             DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval(totalSeconds)) {
                 self.statusLabel.text = "達成！"
-                self.animationView.animation = LottieAnimation.named("success")
+                self.animationView.animation = LottieAnimation.named("達成")
                 self.animationView.play()
                 self.player?.play()
 
